@@ -12,6 +12,4 @@ RUN mkdir /var/lib/jenkins && ln -s /usr/bin /var/lib/jenkins/bin
 
 USER jenkins
 
-# COPY jenkins_home/ /var/jenkins_home
-
 expose 50000 80 8080
