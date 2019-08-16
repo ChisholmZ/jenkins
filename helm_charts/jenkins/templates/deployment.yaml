@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{ .Values.serviceName }}
+ labels:
+   app: {{ .Values.serviceName }}
+spec:
+ replicas: {{ .Values.replicaCount }}
+ selector:
+   matchLabels:
+     app: {{ .Values.serviceName }}
+ template:
+   metadata:
+     labels:
+       app: {{ .Values.serviceName }}
+   spec:
+     containers:
+     - name: {{ .Values.serviceName }}-con
+       image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+       imagePullPolicy: {{ .Values.image.pullPolicy }}
+       ports:
+       - containerPort: {{ .Values.service.port }}
+       env:
+       - name: DB_DATABASE
+         valueFrom:
+                 configMapKeyRef:
+                         name: hub-config
+                         key: dbname
+       - name: DB_HOST
+         valueFrom:
+                 configMapKeyRef:
+                         name: hub-config
+                         key: dbhost
+       - name: DB_USERNAME
+         valueFrom:
+                 configMapKeyRef:
+                         name: hub-config
+                         key: dbusername
+       - name: DB_PASSWORD
+         valueFrom:
+                 secretKeyRef:
+                         name: hub-secrets
+                         key: db_password
+       - name: AWS_ACCESS_KEY_ID
+         value: "AKIAJUZEIIEW7ZDXD3AQ"
+       - name: AWS_SECRET_ACCESS_KEY
+         value: "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"
+       - name: AWS_DEFAULT_REGION
+         value: "us-west-2"
+       volumeMounts:
+       - mountPath: /var/jenkins_home
+         name: jenkins-pv-storage
+     volumes:
+     - name: jenkins-pv-storage
+       persistentVolumeClaim:
+         claimName: jenkins-pv-claim
+     #   volumeMounts:
+     #   - name: workspace
+     #     mountPath: /var/jenkins_home
+     # volumes:
+     # - name: workspace
+     #   hostPath:
+     #     path: {{ .Values.localPath | replace "C:/" "/c/" }}/jenkins_home
+     #     type: DirectoryOrCreate
+     imagePullSecrets:
+     - name: ecr-cred

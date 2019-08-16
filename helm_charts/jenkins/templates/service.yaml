@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.serviceName }}-service
+spec:
+  selector:
+    app: {{ .Values.serviceName }}
+  type: {{ .Values.service.type }}
+  ports:
+  - protocol: TCP
+    name: web
+    port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+  - protocol: TCP
+    name: ext
+    port: 50000
+    targetPort: 50000

@@ -1,0 +1,5 @@
+#!/bin/sh
+#build pod on local kube
+#~zach
+
+build_pod --charts=./helm_charts --service-name=jenkins
